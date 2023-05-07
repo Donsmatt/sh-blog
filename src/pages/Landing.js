@@ -60,11 +60,11 @@ const Landing = () => {
                       className="md:odd:flex-row-reverse flex flex-col md:flex-row gap-12 sm:gap-12 md:gap-24"
                       key={post.post_id}
                     >
-                      <div className="post-img">
+                       <div className="post-img">
                         <div className="relative after:content-[''] after:w-full after:h-full after:bg-purple-300 after:absolute after:top-5 after:-left-5 after:-z-[1]">
                           <img
-                            className="w-full max-h-[400px] object-cover"
-                            src={post.img ? post.img : Picture}
+                            className="w-full max-h-[400px] object-cover border-[10px] border-purple-400"
+                            src={post.blog_picture ? `https://blog.shbootcamp.com.ng/${post.blog_picture}` : Picture}
                             alt=""
                           />
                         </div>
