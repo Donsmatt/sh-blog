@@ -1,5 +1,9 @@
 import { CiEdit } from "react-icons/ci";
-import { RiDeleteBin3Line } from "react-icons/ri";
+import {
+  RiDeleteBin3Line,
+  RiShareForward2Fill,
+  RiFacebookFill,
+} from "react-icons/ri";
 import { useNavigate, useParams } from "react-router-dom";
 // import Menu from "../components/Menu";
 import { useEffect, useState } from "react";
@@ -7,7 +11,8 @@ import { getText } from "../utils/getText";
 import { ToastContainer, toast } from "react-toastify";
 import Picture from "../img/marguerite-729510__340.jpg";
 import Button from "../components/Button";
-import { FaHeart } from "react-icons/fa";
+import { FaHeart, FaTwitter } from "react-icons/fa";
+import { MdWhatsapp } from "react-icons/md";
 
 const Single = () => {
   const [posts, setPosts] = useState("");
@@ -18,8 +23,9 @@ const Single = () => {
   const [displayMessage, setDisplayMessage] = useState("");
   const [tag, setTag] = useState("");
   const [tagPosts, setTagPosts] = useState("");
-  const [count, setCount] = useState(0);
+  const [count_id, setCount] = useState(0);
   const [clicked, setClicked] = useState(false);
+  const [hidden, setHidden] = useState(true);
 
   const navigate = useNavigate();
 
@@ -29,16 +35,20 @@ const Single = () => {
 
   const user_id = parseInt(user);
 
+  const shareButton = (e) => {
+    setHidden(!hidden);
+  };
+
   const counter = (e) => {
     e.preventDefault();
     setClicked(!clicked);
     if (clicked === false) {
-      setCount(count + 1);
+      setCount(count_id + 1);
     } else {
-      setCount(count - 1);
+      setCount(count_id - 1);
     }
 
-    const likeData = { id, user_id, count };
+    const likeData = { id, user_id, count_id };
 
     fetch("https://blog.shbootcamp.com.ng/like.php", {
       method: "POST",
@@ -48,12 +58,11 @@ const Single = () => {
       body: JSON.stringify(likeData),
     })
       .then((res) => {
-        return res.json();
+        return res;
       })
       .then((data) => {
-        console.log(data)
+        console.log(data, likeData);
       });
-    
   };
 
   useEffect(() => {
@@ -62,7 +71,7 @@ const Single = () => {
         `https://blog.shbootcamp.com.ng/fetch_post.php?id=${id}`
       );
       const data = await res.json();
-      console.log(data);
+      // console.log(data);
       const blog = data.fetch_post.post;
       setPosts(blog);
       setPost(blog);
@@ -237,7 +246,7 @@ const Single = () => {
       );
       const data = await res.json();
       const blogs = data.message.all_tag;
-      console.log(tag, blogs);
+      // console.log(tag, blogs);
 
       setTagPosts(blogs);
     }
@@ -304,13 +313,27 @@ const Single = () => {
                   onClick={counter}
                   className={
                     clicked
-                      ? " hover:text-gray-500 text-red-600 cursor-pointer text-3xl transition duration-100 ease-linear"
-                      : "hover:text-red-600 text-gray-500 cursor-pointer text-3xl transition duration-100 ease-linear"
+                      ? " hover:text-black text-red-600 cursor-pointer text-xl transition duration-100 ease-linear"
+                      : "hover:text-red-600 text-black cursor-pointer text-xl transition duration-100 ease-linear"
                   }
                 >
                   <FaHeart />
                 </span>
-                <span className="text-2xl">{count}</span>
+                <span className="text-2xl"></span>
+                <span className=" text-2xl cursor-pointer" onClick={shareButton}>
+                  <RiShareForward2Fill />
+                </span>
+                <span
+                  className={
+                    hidden
+                      ? "flex py-2 px-4 bg-gray-100 rounded-2xl gap-4 opacity-0 transition ease-linear duration-300"
+                      : "flex py-2 px-4 bg-gray-100 rounded-2xl gap-4 opacity-100 transition ease-linear duration-300"
+                  }
+                >
+                  <MdWhatsapp />
+                  <FaTwitter />
+                  <RiFacebookFill />
+                </span>
               </div>
 
               <h1 className="font-bold text-lg uppercase py-2">Comments:</h1>
@@ -349,15 +372,17 @@ const Single = () => {
           ))}
       </div>
       <div className=" pt-2 border-t md:border-l md:border-t-0 md:pl-4 single-menu">
+        <h1 className="text-lg font-semibold uppercase text-center mb-4">
+          Other posts you may like
+        </h1>
         {tagPosts &&
-          tagPosts.filter((post) => (
-            id !== post.post_id
-          )).map((post) => (
-            <div className="flex flex-col gap-[25px]">
-              <h1 className="text-lg font-semibold uppercase">
-                Other posts you may like
-              </h1>
-              <div className="flex flex-col gap-[10px]" key={post.post_id}>
+          tagPosts
+            .filter((post) => id !== post.post_id)
+            .map((post) => (
+              <div
+                className="flex flex-col border-t pt-6 mb-6"
+                key={post.post_id}
+              >
                 <img
                   className="w-full h-[200px] object-cover"
                   src={
@@ -367,11 +392,10 @@ const Single = () => {
                   }
                   alt=""
                 />
-                <h2 className="text-xl">{post.blog_title}</h2>
+                <h2 className="text-xl mb-4">{post.blog_title}</h2>
                 <Button primary={true} text="Read More" />
               </div>
-            </div>
-          ))}
+            ))}
       </div>
     </div>
   );
