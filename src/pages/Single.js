@@ -23,7 +23,7 @@ const Single = () => {
   const [displayMessage, setDisplayMessage] = useState("");
   const [tag, setTag] = useState("");
   const [tagPosts, setTagPosts] = useState("");
-  const [count_id, setCount] = useState(0);
+  const [count_id, setCount] = useState(1);
   const [clicked, setClicked] = useState(false);
   const [hidden, setHidden] = useState(true);
 
@@ -35,6 +35,10 @@ const Single = () => {
 
   const user_id = parseInt(user);
 
+  const url = window.location.href;
+
+  console.log(url, post, posts);
+
   const shareButton = (e) => {
     setHidden(!hidden);
   };
@@ -43,14 +47,14 @@ const Single = () => {
     e.preventDefault();
     setClicked(!clicked);
     if (clicked === false) {
-      setCount(count_id + 1);
-    } else {
       setCount(count_id - 1);
+    } else {
+      setCount(count_id + 1);
     }
 
     const likeData = { id, user_id, count_id };
 
-    fetch("https://blog.shbootcamp.com.ng/like.php", {
+    fetch("https://blog.shbootcamp.com.ng/new_likes.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -320,7 +324,10 @@ const Single = () => {
                   <FaHeart />
                 </span>
                 <span className="text-2xl"></span>
-                <span className=" text-2xl cursor-pointer" onClick={shareButton}>
+                <span
+                  className=" text-2xl cursor-pointer"
+                  onClick={shareButton}
+                >
                   <RiShareForward2Fill />
                 </span>
                 <span
@@ -330,9 +337,24 @@ const Single = () => {
                       : "flex py-2 px-4 bg-gray-100 rounded-2xl gap-4 opacity-100 transition ease-linear duration-300"
                   }
                 >
-                  <MdWhatsapp />
-                  <FaTwitter />
-                  <RiFacebookFill />
+                  <span>
+                    <a href={``}>
+                      <MdWhatsapp />
+                    </a>
+                  </span>
+                  <span>
+                    <a
+                      href={`https://twitter.com/intent/tweet?url=${url}?title=${post.blog_title}?text=${post.body}`}
+                      target="_blank"
+                    >
+                      <FaTwitter />
+                    </a>
+                  </span>
+                  <span>
+                    <a href="/">
+                      <RiFacebookFill />
+                    </a>
+                  </span>
                 </span>
               </div>
 
